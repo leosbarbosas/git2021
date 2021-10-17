@@ -13,9 +13,9 @@ library(geobr)
 library(tmap)
 
 lista_grade = grid_state_correspondence_table %>%
-  filter(abbrev_state=='SP') %>% print()
+  filter(abbrev_state == 'SP') %>% print()
 
-mun = read_municipality(code_muni=3548708, year = 2010) %>% st_transform(31983)
+mun = read_municipality(code_muni = 3548708, year = 2010) %>% st_transform(31983)
 
 grade_sbc = read_statistical_grid(code_grid=25) %>% st_transform(31983) %>% st_intersection(mun)
 
@@ -24,9 +24,10 @@ risco = read_disaster_risk_area() %>% st_transform(31983) %>% st_intersection(mu
 grade_sbc$pop_risco = lengths(st_intersects(grade_sbc,risco)) > 0 #Inspirado em: https://gis.stackexchange.com/questions/394954/r-using-st-intersects-to-classify-points-inside-outside-and-within-a-buffer
 
 pop_risco = filter(grade_sbc,pop_risco==TRUE)
-sum(pop_risco$POP)
-sum(grade_sbc$POP)
+sum(pop_risco$POP) # populacao em celulas da grade com areas de risco
+sum(grade_sbc$POP) # populacao total do municipio
 
+# mapa para checar celulas da grade que estao sendo consideradas na soma
 tm_shape(grade_sbc)+
   tm_polygons('pop_risco',palette='viridis')+
   tm_shape(risco)+
